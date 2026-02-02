@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven (Linux, Windows, macOS)
 
 on:
   push:
@@ -8,7 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       # Step 1: Checkout repository
@@ -27,8 +31,9 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean package --file simpleWebApp/pom.xml
 
-      # Step 4: Upload JAR as artifact
+      # Step 4: Upload JAR as artifact (only once, not 3 times)
       - name: Upload JAR artifact
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: simpleWebApp-jar
