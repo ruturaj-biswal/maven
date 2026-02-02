@@ -1,5 +1,35 @@
-- name: Upload JAR artifact
-  uses: actions/upload-artifact@v4
-  with:
-    name: simpleWebApp-jar
-    path: simpleWebApp/target/*.jar
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # Step 3: Build project with Maven
+      - name: Build with Maven
+        run: mvn -B clean package --file simpleWebApp/pom.xml
+
+      # Step 4: Upload JAR as artifact
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simpleWebApp-jar
+          path: simpleWebApp/target/*.jar
